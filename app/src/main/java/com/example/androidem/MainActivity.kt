@@ -1,20 +1,22 @@
 package com.example.androidem
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.androidem.fragments.FirstFragment
+import com.example.androidem.router.Router
+import com.example.androidem.router.AppRouter
 
 class MainActivity : AppCompatActivity() {
+    lateinit var router: Router
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        router = AppRouter(R.id.fragment_container, this)
+
+        if (savedInstanceState == null) {
+            router.navigateTo(FirstFragment(), true, "first")
         }
     }
 }

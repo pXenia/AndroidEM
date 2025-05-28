@@ -1,0 +1,464 @@
+Index: featurehome/src/main/java/com/example/featurehome/domain/HomeRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/featurehome/src/main/java/com/example/featurehome/domain/HomeRepository.kt b/featurehome/src/main/java/com/example/featurehome/domain/HomeRepository.kt
+new file mode 100644
+--- /dev/null	(date 1748347423947)
++++ b/featurehome/src/main/java/com/example/featurehome/domain/HomeRepository.kt	(date 1748347423947)
+@@ -0,0 +1,9 @@
++package com.example.featurehome.domain
++
++import com.example.core.domain.ArticleResponse
++import com.example.core.domain.UserResponse
++
++interface HomeRepository {
++    suspend fun getUser(): UserResponse
++    suspend fun getArticles(): List<ArticleResponse>
++}
+\ No newline at end of file
+Index: featurehome/src/main/java/com/example/featurehome/data/HomeRepositoryImpl.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/featurehome/src/main/java/com/example/featurehome/data/HomeRepositoryImpl.kt b/featurehome/src/main/java/com/example/featurehome/data/HomeRepositoryImpl.kt
+new file mode 100644
+--- /dev/null	(date 1748436740965)
++++ b/featurehome/src/main/java/com/example/featurehome/data/HomeRepositoryImpl.kt	(date 1748436740965)
+@@ -0,0 +1,21 @@
++package com.example.featurehome.data
++
++import com.example.core.data.ArticleApi
++import com.example.core.data.UserApi
++import com.example.core.domain.ArticleResponse
++import com.example.core.domain.UserResponse
++import com.example.featurehome.domain.HomeRepository
++import javax.inject.Inject
++
++class HomeRepositoryImpl @Inject constructor(
++    private val userApi: UserApi,
++    private val articleApi: ArticleApi
++) : HomeRepository {
++    override suspend fun getUser(): UserResponse {
++        return userApi.getUser()
++    }
++
++    override suspend fun getArticles(): List<ArticleResponse> {
++        return articleApi.getArticles()
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/androidem/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.androidem\r\n\r\nimport android.os.Bundle\r\nimport androidx.activity.enableEdgeToEdge\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport androidx.core.view.ViewCompat\r\nimport androidx.core.view.WindowInsetsCompat\r\n\r\nclass MainActivity : AppCompatActivity() {\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        enableEdgeToEdge()\r\n        setContentView(R.layout.activity_main)\r\n        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->\r\n            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())\r\n            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)\r\n            insets\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/androidem/MainActivity.kt b/app/src/main/java/com/example/androidem/MainActivity.kt
+--- a/app/src/main/java/com/example/androidem/MainActivity.kt	(revision 627c1afca799c8deb6e7f3ec3dc77158769e645e)
++++ b/app/src/main/java/com/example/androidem/MainActivity.kt	(date 1748435856194)
+@@ -11,10 +11,5 @@
+         super.onCreate(savedInstanceState)
+         enableEdgeToEdge()
+         setContentView(R.layout.activity_main)
+-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+-            insets
+-        }
+     }
+ }
+\ No newline at end of file
+Index: featurehome/src/main/java/com/example/featurehome/di/DataProviderModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/featurehome/src/main/java/com/example/featurehome/di/DataProviderModule.kt b/featurehome/src/main/java/com/example/featurehome/di/DataProviderModule.kt
+new file mode 100644
+--- /dev/null	(date 1748439217194)
++++ b/featurehome/src/main/java/com/example/featurehome/di/DataProviderModule.kt	(date 1748439217194)
+@@ -0,0 +1,29 @@
++package com.example.featurehome.di
++
++import com.example.core.data.ArticleApi
++import com.example.core.data.UserApi
++import com.example.core.di.CoreComponent
++import com.example.core.di.DaggerCoreComponent
++import dagger.Module
++import dagger.Provides
++import javax.inject.Singleton
++
++@Module
++object DataProviderModule {
++
++    @Provides
++    @Singleton
++    fun provideCoreComponent(): CoreComponent {
++        return DaggerCoreComponent.builder().build()
++    }
++
++    @Provides
++    fun provideUserApi(coreComponent: CoreComponent): UserApi {
++        return coreComponent.userApi()
++    }
++
++    @Provides
++    fun provideArticlesApi(coreComponent: CoreComponent): ArticleApi {
++        return coreComponent.articleApi()
++    }
++}
+\ No newline at end of file
+Index: .idea/runConfigurations.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/runConfigurations.xml b/.idea/runConfigurations.xml
+new file mode 100644
+--- /dev/null	(date 1748319150569)
++++ b/.idea/runConfigurations.xml	(date 1748319150569)
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="RunConfigurationProducerService">
++    <option name="ignoredProducers">
++      <set>
++        <option value="com.intellij.execution.junit.AbstractAllInDirectoryConfigurationProducer" />
++        <option value="com.intellij.execution.junit.AllInPackageConfigurationProducer" />
++        <option value="com.intellij.execution.junit.PatternConfigurationProducer" />
++        <option value="com.intellij.execution.junit.TestInClassConfigurationProducer" />
++        <option value="com.intellij.execution.junit.UniqueIdConfigurationProducer" />
++        <option value="com.intellij.execution.junit.testDiscovery.JUnitTestDiscoveryConfigurationProducer" />
++        <option value="org.jetbrains.kotlin.idea.junit.KotlinJUnitRunConfigurationProducer" />
++        <option value="org.jetbrains.kotlin.idea.junit.KotlinPatternConfigurationProducer" />
++      </set>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: featurehome/src/main/java/com/example/featurehome/domain/usecases/GetUserUseCase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/featurehome/src/main/java/com/example/featurehome/domain/usecases/GetUserUseCase.kt b/featurehome/src/main/java/com/example/featurehome/domain/usecases/GetUserUseCase.kt
+new file mode 100644
+--- /dev/null	(date 1748438988890)
++++ b/featurehome/src/main/java/com/example/featurehome/domain/usecases/GetUserUseCase.kt	(date 1748438988890)
+@@ -0,0 +1,13 @@
++package com.example.featurehome.domain.usecases
++
++import com.example.core.domain.UserResponse
++import com.example.featurehome.domain.HomeRepository
++import javax.inject.Inject
++
++class GetUserUseCase @Inject constructor(
++    private val repository: HomeRepository
++) {
++    suspend operator fun invoke(): UserResponse {
++        return repository.getUser()
++    }
++}
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+new file mode 100644
+--- /dev/null	(date 1748325938651)
++++ b/.idea/gradle.xml	(date 1748325938651)
+@@ -0,0 +1,21 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="GradleMigrationSettings" migrationVersion="1" />
++  <component name="GradleSettings">
++    <option name="linkedExternalProjectsSettings">
++      <GradleProjectSettings>
++        <option name="testRunner" value="CHOOSE_PER_TEST" />
++        <option name="externalProjectPath" value="$PROJECT_DIR$" />
++        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
++        <option name="modules">
++          <set>
++            <option value="$PROJECT_DIR$" />
++            <option value="$PROJECT_DIR$/app" />
++            <option value="$PROJECT_DIR$/core" />
++            <option value="$PROJECT_DIR$/featurehome" />
++          </set>
++        </option>
++      </GradleProjectSettings>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: featurehome/src/main/java/com/example/featurehome/di/HomeModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/featurehome/src/main/java/com/example/featurehome/di/HomeModule.kt b/featurehome/src/main/java/com/example/featurehome/di/HomeModule.kt
+new file mode 100644
+--- /dev/null	(date 1748438769494)
++++ b/featurehome/src/main/java/com/example/featurehome/di/HomeModule.kt	(date 1748438769494)
+@@ -0,0 +1,15 @@
++package com.example.featurehome.di
++
++import com.example.featurehome.data.HomeRepositoryImpl
++import com.example.featurehome.domain.HomeRepository
++import dagger.Binds
++import dagger.Module
++import javax.inject.Singleton
++
++@Module
++interface HomeModule {
++    @Binds
++    @Singleton
++    fun bindHomeRepository(impl: HomeRepositoryImpl): HomeRepository
++}
++
+Index: featurehome/src/main/java/com/example/featurehome/presentation/HomeViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/featurehome/src/main/java/com/example/featurehome/presentation/HomeViewModel.kt b/featurehome/src/main/java/com/example/featurehome/presentation/HomeViewModel.kt
+new file mode 100644
+--- /dev/null	(date 1748438523625)
++++ b/featurehome/src/main/java/com/example/featurehome/presentation/HomeViewModel.kt	(date 1748438523625)
+@@ -0,0 +1,24 @@
++package com.example.featurehome.presentation
++
++import android.util.Log
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.viewModelScope
++import com.example.featurehome.domain.usecases.GetArticlesUseCase
++import com.example.featurehome.domain.usecases.GetUserUseCase
++import kotlinx.coroutines.launch
++import javax.inject.Inject
++
++val TAG = "HomeData"
++
++class HomeViewModel @Inject constructor(
++    private val getUserUseCase: GetUserUseCase, private val getArticlesUseCase: GetArticlesUseCase
++) : ViewModel() {
++
++    fun getData() {
++        viewModelScope.launch {
++            val user = getUserUseCase()
++            val articles = getArticlesUseCase()
++            Log.d(TAG, ("User: $user, Articles: $articles"))
++        }
++    }
++}
+\ No newline at end of file
+Index: featurehome/src/main/java/com/example/featurehome/di/HomeComponent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/featurehome/src/main/java/com/example/featurehome/di/HomeComponent.kt b/featurehome/src/main/java/com/example/featurehome/di/HomeComponent.kt
+new file mode 100644
+--- /dev/null	(date 1748438769535)
++++ b/featurehome/src/main/java/com/example/featurehome/di/HomeComponent.kt	(date 1748438769535)
+@@ -0,0 +1,22 @@
++package com.example.featurehome.di
++
++import android.content.Context
++import com.example.featurehome.presentation.HomeViewModel
++import dagger.BindsInstance
++import dagger.Component
++import javax.inject.Singleton
++
++@Singleton
++@Component(modules = [
++    HomeModule::class,
++    HomeViewModelModule::class,
++    DataProviderModule::class
++])
++interface HomeComponent {
++    fun getHomeViewModel(): HomeViewModel
++
++    @Component.Factory
++    interface Factory {
++        fun create(@BindsInstance context: Context): HomeComponent
++    }
++}
+Index: .idea/AndroidProjectSystem.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/AndroidProjectSystem.xml b/.idea/AndroidProjectSystem.xml
+new file mode 100644
+--- /dev/null	(date 1748318990538)
++++ b/.idea/AndroidProjectSystem.xml	(date 1748318990538)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="AndroidProjectSystem">
++    <option name="providerId" value="com.android.tools.idea.GradleProjectSystem" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+new file mode 100644
+--- /dev/null	(date 1748350466602)
++++ b/.idea/misc.xml	(date 1748350466602)
+@@ -0,0 +1,4 @@
++<project version="4">
++  <component name="ExternalStorageConfigurationManager" enabled="true" />
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK" />
++</project>
+\ No newline at end of file
+Index: build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\r\nplugins {\r\n    alias(libs.plugins.android.application) apply false\r\n    alias(libs.plugins.kotlin.android) apply false\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle.kts b/build.gradle.kts
+--- a/build.gradle.kts	(revision 627c1afca799c8deb6e7f3ec3dc77158769e645e)
++++ b/build.gradle.kts	(date 1748417987435)
+@@ -2,4 +2,5 @@
+ plugins {
+     alias(libs.plugins.android.application) apply false
+     alias(libs.plugins.kotlin.android) apply false
++    alias(libs.plugins.android.library) apply false
+ }
+\ No newline at end of file
+Index: .idea/migrations.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/migrations.xml b/.idea/migrations.xml
+new file mode 100644
+--- /dev/null	(date 1748319167970)
++++ b/.idea/migrations.xml	(date 1748319167970)
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectMigrations">
++    <option name="MigrateToGradleLocalJavaHome">
++      <set>
++        <option value="$PROJECT_DIR$" />
++      </set>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: core/src/main/java/com/example/core/di/LoginModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/src/main/java/com/example/core/di/LoginModule.kt b/core/src/main/java/com/example/core/di/LoginModule.kt
+new file mode 100644
+--- /dev/null	(date 1748436636656)
++++ b/core/src/main/java/com/example/core/di/LoginModule.kt	(date 1748436636656)
+@@ -0,0 +1,27 @@
++package com.example.core.di
++
++import com.example.core.data.UserApi
++import dagger.Module
++import dagger.Provides
++import retrofit2.Retrofit
++import javax.inject.Named
++import javax.inject.Singleton
++
++@Module
++class LoginModule {
++    @Provides
++    @Singleton
++    @Named("user")
++    fun provideUserRetrofit(): Retrofit {
++        return Retrofit
++            .Builder()
++            .baseUrl("https://user-examle.com/")
++            .build()
++    }
++
++    @Provides
++    @Singleton
++    fun provideUserApi(): UserApi {
++        return UserApi.createFake()
++    }
++}
+Index: .idea/kotlinc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/kotlinc.xml b/.idea/kotlinc.xml
+new file mode 100644
+--- /dev/null	(date 1748319167965)
++++ b/.idea/kotlinc.xml	(date 1748319167965)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="KotlinJpsPluginSettings">
++    <option name="version" value="2.0.21" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+new file mode 100644
+--- /dev/null	(date 1748325938669)
++++ b/.idea/deploymentTargetSelector.xml	(date 1748325938669)
+@@ -0,0 +1,16 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="deploymentTargetSelector">
++    <selectionStates>
++      <SelectionState runConfigName="app">
++        <option name="selectionMode" value="DROPDOWN" />
++      </SelectionState>
++      <SelectionState runConfigName="core">
++        <option name="selectionMode" value="DROPDOWN" />
++      </SelectionState>
++      <SelectionState runConfigName="featurehome">
++        <option name="selectionMode" value="DROPDOWN" />
++      </SelectionState>
++    </selectionStates>
++  </component>
++</project>
+\ No newline at end of file
+Index: core/src/main/java/com/example/core/di/CoreComponent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/core/src/main/java/com/example/core/di/CoreComponent.kt b/core/src/main/java/com/example/core/di/CoreComponent.kt
+new file mode 100644
+--- /dev/null	(date 1748436636682)
++++ b/core/src/main/java/com/example/core/di/CoreComponent.kt	(date 1748436636682)
+@@ -0,0 +1,13 @@
++package com.example.core.di
++
++import com.example.core.data.ArticleApi
++import com.example.core.data.UserApi
++import dagger.Component
++import javax.inject.Singleton
++
++@Singleton
++@Component(modules = [LoginModule::class, ArticlesModule::class])
++interface CoreComponent {
++    fun userApi(): UserApi
++    fun articleApi(): ArticleApi
++}

@@ -3,6 +3,7 @@ package com.example.featurehome.di
 import com.example.core.data.ArticleApi
 import com.example.core.data.UserApi
 import com.example.core.di.CoreComponent
+import com.example.core.di.DaggerCoreComponent
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "AndroidEM"
 include(":app")
+include(":core")
+include(":featurehome")

@@ -36,7 +36,6 @@ class FlowerShopRepository(
     }
 
     // продажа букета
-    @Transaction
     suspend fun saleBouquet(bouquetId: Long): Boolean {
         val bouquet = flowersInBouquetDao.getFlowersForBouquet(bouquetId)
         if (bouquet.isEmpty()) return false
